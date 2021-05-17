@@ -31,7 +31,7 @@ SRC_URI = "\
         file://0001-Change-docker-socket-location-to-run-docker.sock.patch \
 	"
 
-require docker.inc
+require docker-wr.inc
 
 # Apache-2.0 for docker
 LICENSE = "Apache-2.0"
