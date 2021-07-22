@@ -13,6 +13,7 @@ SRC_URI = "git://github.com/kubernetes/kubernetes.git;branch=release-1.18;name=k
            file://0001-hack-lib-golang.sh-use-CC-from-environment.patch \
            file://0001-cross-don-t-build-tests-by-default.patch \
            file://0001-Makefile.generated_files-Fix-race-issue-for-installi.patch \
+           file://0001-build-golang.sh-convert-remaining-go-calls-to-use.patch \
           "
 
 SRC_URI_append_arm = " file://0001-fix-arm-node-failed-to-join-master-node.patch"
@@ -52,7 +53,7 @@ do_compile() {
 	export CC="${BUILD_CC}"
 	export LD="${BUILD_LD}"
 
-	make generated_files KUBE_BUILD_PLATFORMS="${HOST_GOOS}/${BUILD_GOARCH}"
+	make generated_files GO="go" KUBE_BUILD_PLATFORMS="${HOST_GOOS}/${BUILD_GOARCH}"
 
 	# Build the target binaries
 	export GOARCH="${TARGET_GOARCH}"
@@ -66,7 +67,7 @@ do_compile() {
 	export LD="${LD}"
 
 	# to limit what is built, use 'WHAT', i.e. make WHAT=cmd/kubelet
-	make cross KUBE_BUILD_PLATFORMS=${GOOS}/${GOARCH} GOLDFLAGS=""
+	make cross CGO_FLAGS=${CGO_FLAGS} GO=${GO} KUBE_BUILD_PLATFORMS=${GOOS}/${GOARCH} GOLDFLAGS=""
 }
 
 do_install() {
