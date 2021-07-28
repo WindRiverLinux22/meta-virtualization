@@ -14,6 +14,7 @@ SRC_URI = "git://github.com/kubernetes/kubernetes.git;branch=release-1.18;name=k
            file://0001-cross-don-t-build-tests-by-default.patch \
            file://0001-Makefile.generated_files-Fix-race-issue-for-installi.patch \
            file://0001-build-golang.sh-convert-remaining-go-calls-to-use.patch \
+           file://0001-Bump-containernetworking-cni-to-v0.8.1.patch \
           "
 
 SRC_URI_append_arm = " file://0001-fix-arm-node-failed-to-join-master-node.patch"
