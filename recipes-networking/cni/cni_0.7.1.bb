@@ -18,7 +18,7 @@ SRC_URI = "\
         git://github.com/containernetworking/plugins.git;branch=v0.7;destsuffix=plugins;name=plugins \
 	"
 
-RPROVIDES_${PN} += "kubernetes-cni"
+RPROVIDES:${PN} += "kubernetes-cni"
 
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://src/import/LICENSE;md5=fa818a259cbed7ce8bc2a22d35a464fc"
@@ -27,7 +27,7 @@ GO_IMPORT = "import"
 
 PV = "0.7.1"
 
-COMPATIBLE_HOST_mips = "null"
+COMPATIBLE_HOST:mips = "null"
 
 inherit go
 inherit goarch
@@ -77,6 +77,6 @@ do_install() {
     install -m 755 -D ${WORKDIR}/plugins/bin/* ${D}/${localbindir}
 }
 
-FILES_${PN} += "/opt/cni/bin/*"
+FILES:${PN} += "/opt/cni/bin/*"
 
-INSANE_SKIP_${PN} += "ldflags already-stripped"
+INSANE_SKIP:${PN} += "ldflags already-stripped"
