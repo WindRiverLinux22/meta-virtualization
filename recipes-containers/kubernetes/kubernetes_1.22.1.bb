@@ -5,27 +5,24 @@ applications across multiple hosts, providing basic mechanisms for deployment, \
 maintenance, and scaling of applications. \
 "
 
-SRCREV_kubernetes = "9f2892aab98fe339f3bd70e3c470144299398ace"
-SRCREV_kubernetes-release = "c600d12013979543fcfab24c977ffae158405a21"
+SRCREV_kubernetes = "632ed300f2c34f6d6d15ca4cef3d3c7073412212"
+SRCREV_kubernetes-release = "7c1aa83dac555de6f05500911467b70aca4949f0"
 
-SRC_URI = "git://github.com/kubernetes/kubernetes.git;branch=release-1.18;name=kubernetes \
+SRC_URI = "git://github.com/kubernetes/kubernetes.git;branch=release-1.22;name=kubernetes \
            git://github.com/kubernetes/release;branch=master;name=kubernetes-release;destsuffix=git/release \
            file://0001-hack-lib-golang.sh-use-CC-from-environment.patch \
            file://0001-cross-don-t-build-tests-by-default.patch \
-           file://0001-Makefile.generated_files-Fix-race-issue-for-installi.patch \
            file://0001-build-golang.sh-convert-remaining-go-calls-to-use.patch \
-           file://0001-Bump-containernetworking-cni-to-v0.8.1.patch \
+           file://0001-Makefile.generated_files-Fix-race-issue-for-installi.patch \
           "
-
-SRC_URI:append:arm = " file://0001-fix-arm-node-failed-to-join-master-node.patch"
 
 DEPENDS += "rsync-native \
             coreutils-native \
+            go-native \
            "
 
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://src/import/LICENSE;md5=3b83ef96387f14655fc854ddc3c6bd57"
-S = "${WORKDIR}/git"
 
 GO_IMPORT = "import"
 
@@ -50,7 +47,9 @@ do_compile() {
 	export CFLAGS="${BUILD_CFLAGS}"
 	export LDFLAGS="${BUILD_LDFLAGS}"
 	export CGO_CFLAGS="${BUILD_CFLAGS}"
-	export CGO_LDFLAGS="${BUILD_LDFLAGS}"
+	# as of go 1.15.5, there are some flags the CGO doesn't like. Rather than
+	# clearing them all, we sed away the ones we don't want.
+	export CGO_LDFLAGS="$(echo ${BUILD_LDFLAGS} | sed 's/-Wl,-O1//g' | sed 's/-Wl,--dynamic-linker.*?\( \|$\)//g')"
 	export CC="${BUILD_CC}"
 	export LD="${BUILD_LD}"
 
@@ -66,6 +65,7 @@ do_compile() {
 	export LDFLAGS=""
 	export CC="${CC}"
 	export LD="${LD}"
+	export GOBIN=""
 
 	# to limit what is built, use 'WHAT', i.e. make WHAT=cmd/kubelet
 	make cross CGO_FLAGS=${CGO_FLAGS} GO=${GO} KUBE_BUILD_PLATFORMS=${GOOS}/${GOARCH} GOLDFLAGS=""
@@ -97,7 +97,7 @@ RDEPENDS:${PN} += "kubeadm \
                    kubelet \
                    cni \
                    conntrack-tools \
-                  "
+"
 
 RDEPENDS:kubeadm = "kubelet kubectl"
 FILES:kubeadm = "${bindir}/kubeadm ${systemd_unitdir}/system/kubelet.service.d/*"
