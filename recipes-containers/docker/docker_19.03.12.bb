@@ -32,6 +32,9 @@ SRC_URI = "\
         file://0001-Use-real-root-with-0701-perms.patch \
         file://0002-Lock-down-docker-root-dir-perms.patch \
         file://0001-chrootarchive-don-t-create-parent-dirs-outside-of-ch.patch \
+        file://0001-GetDefaultAuthConfig-fix-potential-panic-due-to-unha.patch \
+        file://0002-Fix-panic-when-failing-to-get-DefaultAuthConfig.patch \
+        file://0003-registry-ensure-default-auth-config-has-address.patch \
 	"
 
 require docker-wr.inc
