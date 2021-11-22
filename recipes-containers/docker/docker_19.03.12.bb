@@ -31,6 +31,7 @@ SRC_URI = "\
         file://0001-Change-docker-socket-location-to-run-docker.sock.patch \
         file://0001-Use-real-root-with-0701-perms.patch \
         file://0002-Lock-down-docker-root-dir-perms.patch \
+        file://0001-chrootarchive-don-t-create-parent-dirs-outside-of-ch.patch \
 	"
 
 require docker-wr.inc
