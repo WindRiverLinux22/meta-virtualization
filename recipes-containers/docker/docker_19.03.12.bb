@@ -21,8 +21,8 @@ DESCRIPTION = "Linux container runtime \
 SRCREV_docker = "48a66213fe1747e8873f849862ff3fb981899fc6"
 SRCREV_libnetwork = "026aabaa659832804b01754aaadd2c0f420c68b6"
 SRC_URI = "\
-	git://github.com/docker/docker-ce.git;branch=19.03;name=docker \
-	git://github.com/docker/libnetwork.git;branch=bump_19.03;name=libnetwork;destsuffix=git/libnetwork \
+	git://github.com/docker/docker-ce.git;branch=19.03;protocol=https;name=docker \
+	git://github.com/docker/libnetwork.git;branch=bump_19.03;protocol=https;name=libnetwork;destsuffix=git/libnetwork \
 	file://0001-libnetwork-use-GO-instead-of-go.patch \
 	file://docker.init \
 	file://0001-imporve-hardcoded-CC-on-cross-compile-docker-ce.patch \
