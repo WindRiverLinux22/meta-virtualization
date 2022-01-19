@@ -29,7 +29,13 @@ RDEPENDS:${PN} = "util-linux util-linux-unshare iptables \
                  "
 RDEPENDS:${PN} += "virtual-containerd virtual-runc"
 
-RRECOMMENDS:${PN} = "kernel-module-dm-thin-pool kernel-module-nf-nat kernel-module-nf-conntrack-netlink kernel-module-xt-addrtype kernel-module-xt-masquerade"
+RRECOMMENDS:${PN} = "kernel-module-dm-thin-pool \
+    kernel-module-nf-nat \
+    kernel-module-nf-conntrack-netlink \
+    kernel-module-xt-addrtype \
+    kernel-module-xt-masquerade \
+    kernel-module-xt-nat \
+    "
 
 PROVIDES += "virtual/docker"
 
