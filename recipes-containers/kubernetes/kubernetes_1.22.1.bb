@@ -8,8 +8,8 @@ maintenance, and scaling of applications. \
 SRCREV_kubernetes = "632ed300f2c34f6d6d15ca4cef3d3c7073412212"
 SRCREV_kubernetes-release = "7c1aa83dac555de6f05500911467b70aca4949f0"
 
-SRC_URI = "git://github.com/kubernetes/kubernetes.git;branch=release-1.22;name=kubernetes \
-           git://github.com/kubernetes/release;branch=master;name=kubernetes-release;destsuffix=git/release \
+SRC_URI = "git://github.com/kubernetes/kubernetes.git;branch=release-1.22;name=kubernetes;protocol=https \
+           git://github.com/kubernetes/release;branch=master;name=kubernetes-release;destsuffix=git/release;protocol=https \
            file://0001-hack-lib-golang.sh-use-CC-from-environment.patch \
            file://0001-cross-don-t-build-tests-by-default.patch \
            file://0001-build-golang.sh-convert-remaining-go-calls-to-use.patch \
