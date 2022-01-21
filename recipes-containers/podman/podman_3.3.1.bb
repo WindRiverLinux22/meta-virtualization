@@ -19,7 +19,7 @@ DEPENDS = " \
 
 SRCREV = "4c5283fabff2de5145838f1847a5a7b2b1fbc0a5"
 SRC_URI = " \
-    git://github.com/containers/podman.git;branch=v3.3 \
+    git://github.com/containers/podman.git;branch=v3.3;protocol=https \
 "
 
 LICENSE = "Apache-2.0"
