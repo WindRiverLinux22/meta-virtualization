@@ -11,11 +11,11 @@ is simple to implement. \
 
 # 0.7.1
 SRCREV_cni = "4cfb7b568922a3c79a23e438dc52fe537fc9687e"
-# 0.7.6
-SRCREV_plugins = "9f96827c7cabb03f21d86326000c00f61e181f6a"
+# 1.1.1
+SRCREV_plugins = "4744ec27b89c083194e7df498de50f03a8a1d3ec"
 SRC_URI = "\
 	git://github.com/containernetworking/cni.git;branch=main;name=cni;protocol=https \
-    git://github.com/containernetworking/plugins.git;branch=v0.7;destsuffix=plugins;name=plugins;protocol=https \
+        git://github.com/containernetworking/plugins.git;branch=release-1.1;destsuffix=plugins;name=plugins;protocol=https \
 	"
 
 RPROVIDES:${PN} += "kubernetes-cni"
