@@ -17,13 +17,13 @@ DEPENDS = " \
     ${@bb.utils.filter('DISTRO_FEATURES', 'systemd', d)} \
 "
 
-SRCREV = "4c5283fabff2de5145838f1847a5a7b2b1fbc0a5"
+SRCREV = "62534053086fdeba7b93117e7c4dc6e797835a3e"
 SRC_URI = " \
-    git://github.com/containers/podman.git;branch=v3.3;protocol=https \
+    git://github.com/containers/podman.git;branch=v4.0;protocol=https \
 "
 
 LICENSE = "Apache-2.0"
-LIC_FILES_CHKSUM = "file://src/import/LICENSE;md5=e3fc50a88d0a364313df4b21ef20c29e"
+LIC_FILES_CHKSUM = "file://src/import/LICENSE;md5=3d9b931fa23ab1cacd0087f9e2ee12c0"
 
 GO_IMPORT = "import"
 
@@ -89,12 +89,6 @@ do_install() {
 	oe_runmake install DESTDIR="${D}"
 	if ${@bb.utils.contains('PACKAGECONFIG', 'docker', 'true', 'false', d)}; then
 		oe_runmake install.docker DESTDIR="${D}"
-	fi
-	if ${@bb.utils.contains('DISTRO_FEATURES','systemd','true','false',d)}; then
-		install -d ${D}${systemd_unitdir}/system
-		install -m 644 ${S}/src/import/contrib/systemd/system/podman.service ${D}/${systemd_unitdir}/system
-		install -m 644 ${S}/src/import/contrib/systemd/system/podman.socket ${D}/${systemd_unitdir}/system
-		rm -f ${D}/${systemd_unitdir}/system/docker.service.rpm
 	fi
 }
 
