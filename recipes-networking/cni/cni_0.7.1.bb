@@ -13,9 +13,11 @@ is simple to implement. \
 SRCREV_cni = "4cfb7b568922a3c79a23e438dc52fe537fc9687e"
 # 1.1.1
 SRCREV_plugins = "4744ec27b89c083194e7df498de50f03a8a1d3ec"
+SRCREV_flannel_plugin = "076c4462d6c6887614fc881b806b690b9e56ceb2"
 SRC_URI = "\
 	git://github.com/containernetworking/cni.git;branch=main;name=cni;protocol=https \
         git://github.com/containernetworking/plugins.git;branch=release-1.1;destsuffix=plugins;name=plugins;protocol=https \
+        git://github.com/flannel-io/cni-plugin;branch=main;name=flannel_plugin;protocol=https;destsuffix=plugins/plugins/meta/flannel \
 	"
 
 RPROVIDES:${PN} += "kubernetes-cni"
