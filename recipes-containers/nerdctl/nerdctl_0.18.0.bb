@@ -838,8 +838,8 @@ do_compile() {
 }
 
 do_install() {
-        install -d "${D}${BIN_PREFIX}/bin"
-        install -m 755 "${S}/src/import/_output/nerdctl" "${D}${BIN_PREFIX}/bin"
+        install -d "${D}${bindir}"
+        install -m 755 "${S}/src/import/_output/nerdctl" "${D}${bindir}"
 }
 
 INHIBIT_PACKAGE_STRIP = "1"
