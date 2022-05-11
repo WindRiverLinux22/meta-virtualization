@@ -843,5 +843,5 @@ do_install() {
 }
 
 INHIBIT_PACKAGE_STRIP = "1"
-INSANE_SKIP:${PN} += "ldflags already-stripped"
+INSANE_SKIP:${PN} += "ldflags already-stripped textrel"
 
