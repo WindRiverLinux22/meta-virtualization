@@ -1,0 +1,27 @@
+From 839b7be681c7ee9349737c10a144c66131b36d7a Mon Sep 17 00:00:00 2001
+From: Chen Qi <Qi.Chen@windriver.com>
+Date: Wed, 18 May 2022 20:26:17 -0700
+Subject: [PATCH] cli: use external GO111MODULE and cross compiler
+
+Signed-off-by: Chen Qi <Qi.Chen@windriver.com>
+---
+ cli/scripts/build/binary | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/cli/scripts/build/binary b/cli/scripts/build/binary
+index f12a5ac..35ffc06 100755
+--- a/cli/scripts/build/binary
++++ b/cli/scripts/build/binary
+@@ -73,8 +73,6 @@ fi
+ 
+ echo "Building $GO_LINKMODE $(basename "${TARGET}")"
+ 
+-export GO111MODULE=auto
+-
+-go build -o "${TARGET}" -tags "${GO_BUILDTAGS}" --ldflags "${GO_LDFLAGS}" ${GO_BUILDMODE} "${SOURCE}"
++${GO} build -o "${TARGET}" -tags "${GO_BUILDTAGS}" --ldflags "${LDFLAGS}" ${GO_BUILDMODE} "${SOURCE}"
+ 
+ ln -sf "$(basename "${TARGET}")" "$(dirname "${TARGET}")/docker"
+-- 
+2.36.0
+
