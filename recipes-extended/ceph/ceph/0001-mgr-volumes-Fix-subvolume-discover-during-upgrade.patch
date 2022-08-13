@@ -1,0 +1,114 @@
+From b93bc172f27718fb9d4926c3411770bed01bb4bb Mon Sep 17 00:00:00 2001
+From: Kotresh HR <khiremat@redhat.com>
+Date: Fri, 4 Feb 2022 14:55:03 +0530
+Subject: [PATCH 1/2] mgr/volumes: Fix subvolume discover during upgrade
+
+Fixes the subvolume discover to use the correct
+metadata file after an upgrade from legacy subvolume
+to v1. The fix makes sure, it doesn't use the
+handcrafted metadata file placed in the subvolume
+root of legacy subvolume.
+
+Co-authored-by: Arthur Outhenin-Chalandre <arthur.outhenin-chalandre@cern.ch>
+Co-authored-by: Dan van der Ster <daniel.vanderster@cern.ch>
+Co-authored-by: Ramana Raja <rraja@redhat.com>
+Signed-off-by: Kotresh HR <khiremat@redhat.com>
+(cherry picked from commit 7eba9cab6cfb9a13a84062177d7a0fa228311e13)
+
+Upstream-Status: Backport [0cd1d8aa5ac935f738365ba38b397cae0fc9179c]
+CVE: CVE-2022-0670
+
+Signed-off-by: Sakib Sajal <sakib.sajal@windriver.com>
+---
+ .../fs/operations/versions/metadata_manager.py  | 17 ++++++++++++++---
+ .../fs/operations/versions/subvolume_base.py    | 17 ++++++++++++++++-
+ 2 files changed, 30 insertions(+), 4 deletions(-)
+
+diff --git a/src/pybind/mgr/volumes/fs/operations/versions/metadata_manager.py b/src/pybind/mgr/volumes/fs/operations/versions/metadata_manager.py
+index 1b6c4327..cb3059e5 100644
+--- a/src/pybind/mgr/volumes/fs/operations/versions/metadata_manager.py
++++ b/src/pybind/mgr/volumes/fs/operations/versions/metadata_manager.py
+@@ -40,16 +40,17 @@ class MetadataManager(object):
+     def refresh(self):
+         fd = None
+         conf_data = StringIO()
++        log.debug("opening config {0}".format(self.config_path))
+         try:
+-            log.debug("opening config {0}".format(self.config_path))
+             fd = self.fs.open(self.config_path, os.O_RDONLY)
+             while True:
+                 data = self.fs.read(fd, -1, MetadataManager.MAX_IO_BYTES)
+                 if not len(data):
+                     break
+                 conf_data.write(data.decode('utf-8'))
+-            conf_data.seek(0)
+-            self.config.readfp(conf_data)
++        except UnicodeDecodeError:
++            raise MetadataMgrException(-errno.EINVAL,
++                    "failed to decode, erroneous metadata config '{0}'".format(self.config_path))
+         except cephfs.ObjectNotFound:
+             raise MetadataMgrException(-errno.ENOENT, "metadata config '{0}' not found".format(self.config_path))
+         except cephfs.Error as e:
+@@ -58,6 +59,16 @@ class MetadataManager(object):
+             if fd is not None:
+                 self.fs.close(fd)
+ 
++        conf_data.seek(0)
++        try:
++            if sys.version_info >= (3, 2):
++                self.config.read_file(conf_data)
++            else:
++                self.config.readfp(conf_data)
++        except configparser.Error:
++            raise MetadataMgrException(-errno.EINVAL, "failed to parse, erroneous metadata config "
++                    "'{0}'".format(self.config_path))
++
+     def flush(self):
+         # cull empty sections
+         for section in list(self.config.sections()):
+diff --git a/src/pybind/mgr/volumes/fs/operations/versions/subvolume_base.py b/src/pybind/mgr/volumes/fs/operations/versions/subvolume_base.py
+index 2840a9f2..b499d242 100644
+--- a/src/pybind/mgr/volumes/fs/operations/versions/subvolume_base.py
++++ b/src/pybind/mgr/volumes/fs/operations/versions/subvolume_base.py
+@@ -5,6 +5,7 @@ import errno
+ import logging
+ from hashlib import md5
+ from typing import Dict, Union
++from pathlib import Path
+ 
+ import cephfs
+ 
+@@ -123,6 +124,15 @@ class SubvolumeBase(object):
+         raise NotImplementedError
+ 
+     def load_config(self):
++        try:
++            self.fs.stat(self.legacy_config_path)
++            self.legacy_mode = True
++        except cephfs.Error as e:
++            pass
++
++        log.debug("loading config "
++                  "'{0}' [mode: {1}]".format(self.subvolname, "legacy"
++                                             if self.legacy_mode else "new"))
+         if self.legacy_mode:
+             self.metadata_mgr = MetadataManager(self.fs, self.legacy_config_path, 0o640)
+         else:
+@@ -271,8 +281,13 @@ class SubvolumeBase(object):
+             self.fs.stat(self.base_path)
+             self.metadata_mgr.refresh()
+             log.debug("loaded subvolume '{0}'".format(self.subvolname))
++            subvolpath = self.metadata_mgr.get_global_option(MetadataManager.GLOBAL_META_KEY_PATH)
++            if not self.legacy_mode and self.base_path.decode('utf-8') != str(Path(subvolpath).parent):
++                raise MetadataMgrException(-errno.ENOENT, 'fabricated .meta')
+         except MetadataMgrException as me:
+-            if me.errno == -errno.ENOENT and not self.legacy_mode:
++            if me.errno in (-errno.ENOENT, -errno.EINVAL) and not self.legacy_mode:
++                log.warn("subvolume '{0}', {1}, "
++                          "assuming legacy_mode".format(self.subvolname, me.error_str))
+                 self.legacy_mode = True
+                 self.load_config()
+                 self.discover()
+-- 
+2.32.0
+

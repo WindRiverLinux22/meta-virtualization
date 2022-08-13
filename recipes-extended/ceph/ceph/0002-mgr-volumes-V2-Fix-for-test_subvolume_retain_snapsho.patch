@@ -1,0 +1,66 @@
+From ec6d68e85b880e031b30d6bf76780de374a2e57c Mon Sep 17 00:00:00 2001
+From: Kotresh HR <khiremat@redhat.com>
+Date: Thu, 9 Jun 2022 13:30:59 +0530
+Subject: [PATCH 2/2] mgr/volumes: V2 Fix for
+ test_subvolume_retain_snapshot_invalid_recreate
+
+Signed-off-by: Kotresh HR <khiremat@redhat.com>
+
+Upstream-Status: Backport [c774e03c29955f0fb668af6190a9750d03bb09b8]
+CVE: CVE-2022-0670
+
+Signed-off-by: Sakib Sajal <sakib.sajal@windriver.com>
+---
+ .../mgr/volumes/fs/operations/versions/subvolume_base.py  | 8 ++++++--
+ .../mgr/volumes/fs/operations/versions/subvolume_v1.py    | 2 +-
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/src/pybind/mgr/volumes/fs/operations/versions/subvolume_base.py b/src/pybind/mgr/volumes/fs/operations/versions/subvolume_base.py
+index b499d242..aba8c90c 100644
+--- a/src/pybind/mgr/volumes/fs/operations/versions/subvolume_base.py
++++ b/src/pybind/mgr/volumes/fs/operations/versions/subvolume_base.py
+@@ -17,6 +17,7 @@ from ...fs_util import get_ancestor_xattr
+ from ...exception import MetadataMgrException, VolumeException
+ from .op_sm import SubvolumeOpSm
+ from .auth_metadata import AuthMetadataManager
++from .subvolume_attrs import SubvolumeStates
+ 
+ log = logging.getLogger(__name__)
+ 
+@@ -112,7 +113,7 @@ class SubvolumeBase(object):
+     @property
+     def state(self):
+         """ Subvolume state, one of SubvolumeStates """
+-        raise NotImplementedError
++        return SubvolumeStates.from_value(self.metadata_mgr.get_global_option(MetadataManager.GLOBAL_META_KEY_STATE))
+ 
+     @property
+     def subvol_type(self):
+@@ -282,7 +283,10 @@ class SubvolumeBase(object):
+             self.metadata_mgr.refresh()
+             log.debug("loaded subvolume '{0}'".format(self.subvolname))
+             subvolpath = self.metadata_mgr.get_global_option(MetadataManager.GLOBAL_META_KEY_PATH)
+-            if not self.legacy_mode and self.base_path.decode('utf-8') != str(Path(subvolpath).parent):
++            # subvolume with retained snapshots has empty path, don't mistake it for
++            # fabricated metadata.
++            if (not self.legacy_mode and self.state != SubvolumeStates.STATE_RETAINED and
++                self.base_path.decode('utf-8') != str(Path(subvolpath).parent)):
+                 raise MetadataMgrException(-errno.ENOENT, 'fabricated .meta')
+         except MetadataMgrException as me:
+             if me.errno in (-errno.ENOENT, -errno.EINVAL) and not self.legacy_mode:
+diff --git a/src/pybind/mgr/volumes/fs/operations/versions/subvolume_v1.py b/src/pybind/mgr/volumes/fs/operations/versions/subvolume_v1.py
+index b735ccd3..c3e3bb8a 100644
+--- a/src/pybind/mgr/volumes/fs/operations/versions/subvolume_v1.py
++++ b/src/pybind/mgr/volumes/fs/operations/versions/subvolume_v1.py
+@@ -664,7 +664,7 @@ class SubvolumeV1(SubvolumeBase, SubvolumeTemplate):
+ 
+     @property
+     def state(self):
+-        return SubvolumeStates.from_value(self.metadata_mgr.get_global_option(MetadataManager.GLOBAL_META_KEY_STATE))
++        return super(SubvolumeV1, self).state
+ 
+     @state.setter
+     def state(self, val):
+-- 
+2.32.0
+

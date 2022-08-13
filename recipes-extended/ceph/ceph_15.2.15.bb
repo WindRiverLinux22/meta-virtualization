@@ -15,6 +15,8 @@ SRC_URI = "http://download.ceph.com/tarballs/ceph-${PV}.tar.gz \
            file://0001-cmake-add-support-for-python3.10.patch \
            file://0001-SnappyCompressor.h-fix-snappy-compiler-error.patch \
            file://CVE-2021-3979.patch \
+           file://0001-mgr-volumes-Fix-subvolume-discover-during-upgrade.patch \
+           file://0002-mgr-volumes-V2-Fix-for-test_subvolume_retain_snapsho.patch \
 "
 
 SRC_URI[sha256sum] = "5dccdaff2ebe18d435b32bfc06f8b5f474bf6ac0432a6a07d144b7c56700d0bf"
