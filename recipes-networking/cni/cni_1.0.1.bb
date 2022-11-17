@@ -7,3 +7,5 @@ SRC_URI = "\
 	git://github.com/containernetworking/cni.git;nobranch=1;name=cni;protocol=https \
         git://github.com/containernetworking/plugins.git;nobranch=1;destsuffix=${S}/src/github.com/containernetworking/plugins;name=plugins;protocol=https \
 	"
+
+DEFAULT_PREFERENCE = "1"
