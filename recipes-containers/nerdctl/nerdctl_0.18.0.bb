@@ -11,7 +11,7 @@ DEPENDS = " \
 
 SRCREV_nerdcli = "77276ff0fffad3f855ab9f2f5a4ad5527ef76485"
 
-SRC_URI = "git://github.com/containerd/nerdctl.git;name=nerdcli;branch=master;protocol=https"
+SRC_URI = "git://github.com/containerd/nerdctl.git;name=nerdcli;branch=main;protocol=https"
 
 # 	github.com/Masterminds/semver/v3 v3.1.1
 # [1] git ls-remote https://github.com/Masterminds/semver/v3 v3.1.1
