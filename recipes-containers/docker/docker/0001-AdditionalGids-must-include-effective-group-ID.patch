@@ -1,0 +1,33 @@
+From 25345f2c04b2691406d683034d21bb5e51ea982c Mon Sep 17 00:00:00 2001
+From: Nicolas De Loof <nicolas.deloof@gmail.com>
+Date: Thu, 2 Jun 2022 11:30:15 +0200
+Subject: [PATCH] AdditionalGids must include effective group ID
+
+otherwise this one won't be considered for permission checks
+
+Signed-off-by: Nicolas De Loof <nicolas.deloof@gmail.com>
+
+Upstream-Status: Backport [25345f2c04b2691406d683034d21bb5e51ea982c]
+
+CVE: CVE-2022-36109
+
+Signed-off-by: Chen Qi <Qi.Chen@windriver.com>
+---
+ daemon/oci_linux.go | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/import/daemon/oci_linux.go b/src/import/daemon/oci_linux.go
+index 8deeed2b86..cbf6342368 100644
+--- a/src/import/daemon/oci_linux.go
++++ b/src/import/daemon/oci_linux.go
+@@ -198,6 +198,7 @@ func getUser(c *container.Container, username string) (specs.User, error) {
+ 	}
+ 	usr.UID = uint32(execUser.Uid)
+ 	usr.GID = uint32(execUser.Gid)
++	usr.AdditionalGids = []uint32{usr.GID}
+ 
+ 	var addGroups []int
+ 	if len(c.HostConfig.GroupAdd) > 0 {
+-- 
+2.37.1
+
