@@ -14,6 +14,7 @@ SRC_URI = "git://github.com/kubernetes/kubernetes.git;branch=release-1.22;name=k
            file://0001-cross-don-t-build-tests-by-default.patch \
            file://0001-build-golang.sh-convert-remaining-go-calls-to-use.patch \
            file://0001-Makefile.generated_files-Fix-race-issue-for-installi.patch \
+           file://cni-containerd-net.conflist \
           "
 
 DEPENDS += "rsync-native \
@@ -29,6 +30,9 @@ GO_IMPORT = "import"
 inherit systemd
 inherit go
 inherit goarch
+inherit cni_networking
+
+CNI_NETWORKING_FILES ?= "${WORKDIR}/cni-containerd-net.conflist"
 
 COMPATIBLE_HOST = '(x86_64.*|arm.*|aarch64.*)-linux'
 
@@ -99,7 +103,7 @@ RDEPENDS:${PN} += "kubeadm \
                    conntrack-tools \
 "
 
-RDEPENDS:kubeadm = "kubelet kubectl"
+RDEPENDS:kubeadm = "kubelet kubectl cri-tools"
 FILES:kubeadm = "${bindir}/kubeadm ${systemd_unitdir}/system/kubelet.service.d/*"
 
 RDEPENDS:kubelet = "iptables socat util-linux ethtool iproute2 ebtables iproute2-tc"
@@ -113,5 +117,21 @@ FILES:kubectl = "${bindir}/kubectl"
 FILES:kube-proxy = "${bindir}/kube-proxy"
 FILES:${PN}-misc = "${bindir}"
 
+RRECOMMENDS:${PN} = "\
+                     kernel-module-xt-addrtype \
+                     kernel-module-xt-nat \
+                     kernel-module-xt-multiport \
+                     kernel-module-xt-conntrack \
+                     kernel-module-xt-comment \
+                     kernel-module-xt-mark \
+                     kernel-module-xt-connmark \
+                     kernel-module-vxlan \
+                     kernel-module-xt-masquerade \
+                     kernel-module-xt-statistic \
+                     kernel-module-xt-physdev \
+                     kernel-module-xt-nflog \
+                     kernel-module-xt-limit \
+                     kernel-module-nfnetlink-log \
+                     "
 
 deltask compile_ptest_base
