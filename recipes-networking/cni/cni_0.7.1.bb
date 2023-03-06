@@ -20,8 +20,6 @@ SRC_URI = "\
         git://github.com/flannel-io/cni-plugin;branch=main;name=flannel_plugin;protocol=https;destsuffix=plugins/plugins/meta/flannel \
 	"
 
-RPROVIDES:${PN} += "kubernetes-cni"
-
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://src/import/LICENSE;md5=fa818a259cbed7ce8bc2a22d35a464fc"
 
