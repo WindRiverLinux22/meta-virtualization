@@ -19,17 +19,13 @@ RDEPENDS:${PN} = " \
      libassuan \
 "
 
-SRC_URI += " \
-    file://storage.conf \
-    file://registries.conf \
-"
-
 GO_IMPORT = "import"
 
 S = "${WORKDIR}/git"
 
 inherit goarch
 inherit pkgconfig
+inherit container-host
 
 # This disables seccomp and apparmor, which are on by default in the
 # go package. 
@@ -70,10 +66,6 @@ do_install() {
 	install -d ${D}/${sysconfdir}/containers
 
 	install ${S}/src/import/bin/skopeo ${D}/${sbindir}/
-	install ${S}/src/import/default-policy.json ${D}/${sysconfdir}/containers/policy.json
-
-	install ${WORKDIR}/storage.conf ${D}/${sysconfdir}/containers/storage.conf
-	install ${WORKDIR}/registries.conf ${D}/${sysconfdir}/containers/registries.conf
 }
 
 do_install:append:class-native() {

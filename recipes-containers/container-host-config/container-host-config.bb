@@ -9,7 +9,11 @@ SRC_URI = " \
     file://storage.conf \
     file://registries.conf \
     file://policy.json \
+    file://container-sign-policy.json \
 "
+
+# 1 - enable; 0 - disable
+COSIGN_SIGNED_CONTAINER ??= "0"
 
 do_install() {
 	install -d ${D}/${sysconfdir}/containers
@@ -17,6 +21,14 @@ do_install() {
 	install ${WORKDIR}/storage.conf ${D}/${sysconfdir}/containers/storage.conf
 	install ${WORKDIR}/registries.conf ${D}/${sysconfdir}/containers/registries.conf
 	install ${WORKDIR}/policy.json ${D}/${sysconfdir}/containers/policy.json
+}
+
+do_install:append:class-target() {
+    install -d ${D}/${sysconfdir}/containers/registries.d
+
+    if [ "${COSIGN_SIGNED_CONTAINER}" = "1" ]; then
+        install ${WORKDIR}/container-sign-policy.json ${D}/${sysconfdir}/containers/policy.json
+    fi
 }
 
 BBCLASSEXTEND = "native nativesdk"
