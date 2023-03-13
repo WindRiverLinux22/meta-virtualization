@@ -99,6 +99,7 @@ INSANE_SKIP:${PN}-misc += "ldflags already-stripped"
 RDEPENDS:${PN} += "kubeadm \
                    kubectl \
                    kubelet \
+                   kubernetes-cni \
                    cni \
                    conntrack-tools \
 "
