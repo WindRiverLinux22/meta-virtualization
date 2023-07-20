@@ -37,7 +37,7 @@ DESCRIPTION = "Linux container runtime \
 # v20.10.16
 SRCREV_moby = "f756502055d2e36a84f2068e6620bea5ecf09058"
 # latest
-SRCREV_libnetwork = "339b972b464ee3d401b5788b2af9e31d09d6b7da"
+SRCREV_libnetwork = "0d7f33e190f5c52414e18d7d76310554b704ba9c"
 # v20.10.16
 SRCREV_cli = "aa7e414fdcb23a66e8fabbef0a560ef1769eace5"
 SRCREV_FORMAT = "moby_libnetwork"
@@ -46,10 +46,10 @@ SRC_URI = "\
 	git://github.com/docker/libnetwork.git;branch=master;name=libnetwork;destsuffix=git/libnetwork;protocol=https \
 	git://github.com/docker/cli;branch=20.10;name=cli;destsuffix=git/cli;protocol=https \
 	file://docker.init \
-	file://0001-libnetwork-use-GO-instead-of-go.patch \
         file://0001-cli-use-external-GO111MODULE-and-cross-compiler.patch \
         file://0001-dynbinary-use-go-cross-compiler.patch \
         file://0001-AdditionalGids-must-include-effective-group-ID.patch \
+        file://0001-20.10-vendor-libnetwork-c5aa85f9b25f0acaec8591ced679.patch \
 	"
 
 DEPENDS = " \
