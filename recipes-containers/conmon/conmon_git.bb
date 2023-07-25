@@ -12,6 +12,7 @@ DEPENDS = "glib-2.0 go-md2man-native libseccomp"
 SRCREV = "4c41ec2a215c502ad6c38ea255ac1082fa1d381d"
 SRC_URI = "\
     git://github.com/containers/conmon.git;branch=main;protocol=https \
+    file://0001-cgroup-Stumble-on-if-we-can-t-set-up-oom-handling.patch \
 "
 
 PV = "2.1.0+git${SRCPV}"
